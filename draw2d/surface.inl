@@ -15,10 +15,15 @@ inline
 void Surface::set_pixel_srgb( Index aX, Index aY, ColorU8_sRGB const& aColor )
 {
 	assert( aX < mWidth && aY < mHeight ); // IMPORTANT! This line must remain the first line in this function!
-
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
+	
+    // Get offset for the specified pixel position
+    Index offset = get_linear_index(aX, aY);
+	
+	// Try modifying first value = 255 and the rest to 0 to get red pixels only.
+	//   This way we know that we targeted the correct position in memory.
+    mSurface[offset] = aColor.r;
+    mSurface[offset + 1] = aColor.g;
+    mSurface[offset + 2] = aColor.b;
 }
 
 inline 
@@ -35,8 +40,7 @@ auto Surface::get_height() const noexcept -> Index
 inline
 Surface::Index Surface::get_linear_index( Index aX, Index aY ) const noexcept
 {
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	return 0; //TODO: remove this line when you implement this function.
+	Index bytesPerPixel = 4;
+	Index linearIndex = (aY * mWidth + aX) * bytesPerPixel;
+	return linearIndex;
 }

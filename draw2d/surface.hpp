@@ -14,7 +14,7 @@
 
 /** Surface - an image that we can draw to
  *
- * The surface class enacpsulates an image that we can draw to. It provides
+ * The surface class encapsulates an image that we can draw to. It provides
  * minimal functionality to do so.
  *
  * The image data stored by the surface is stored as an 32-bit RGBx format.
@@ -59,7 +59,7 @@ class Surface final
 		// when implementing your drawing functions.
 		std::uint8_t const* get_surface_ptr() const noexcept;
 
-		// Return surfac width
+		// Return surface width
 		Index get_width() const noexcept;
 
 		// Return surface height
