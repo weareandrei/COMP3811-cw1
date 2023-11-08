@@ -8,15 +8,29 @@
 
 void draw_line_solid( Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB aColor )
 {
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
+	int x = aBegin.x;
+	int y = aBegin.y;
+	
+	int dx = aBegin.x - aEnd.x;
+	int dy = aBegin.y - aEnd.y;
 
-	//TODO: remove the following when you start your implementation
-	(void)aSurface; // Avoid warnings about unused arguments until the function
-	(void)aBegin;   // is properly implemented.
-	(void)aEnd;
-	(void)aColor;
+	int p = 2 * dy - dx;
+
+	while (x < aEnd.x)
+	{
+		aSurface.set_pixel_srgb(x, y, aColor);
+		x++;
+
+		if (p < 0)
+		{
+			p = p + 2 * dy;
+		}
+		else
+		{
+			p = p + 2 * dy - 2 * dx;
+			y++;
+		}
+	}
 }
 
 void draw_triangle_wireframe( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, ColorU8_sRGB aColor )
