@@ -6,31 +6,87 @@
 
 #include "surface.hpp"
 
-void draw_line_solid( Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB aColor )
+// Unfinished function
+Vec2f clip_coordinates_on_line(Vec2f point, int dx, int dy, int surfaceWidth, int surfaceHeight)
 {
-	int x = aBegin.x;
-	int y = aBegin.y;
-	
-	int dx = aBegin.x - aEnd.x;
-	int dy = aBegin.y - aEnd.y;
+	// Calculate region codes for the two endpoints
+	int code1 = 0, code2 = 0;
 
-	int p = 2 * dy - dx;
+	if (point.x < 0) code1 |= 1;       // Left of the surface
+	if (point.x > surfaceWidth) code1 |= 2;  // Right of the surface
+	if (point.y < 0) code1 |= 4;       // Above the surface
+	if (point.y > surfaceHeight) code1 |= 8;  // Below the surface
 
-	while (x < aEnd.x)
-	{
-		aSurface.set_pixel_srgb(x, y, aColor);
-		x++;
-
-		if (p < 0)
-		{
-			p = p + 2 * dy;
-		}
-		else
-		{
-			p = p + 2 * dy - 2 * dx;
-			y++;
-		}
+	// Check if both endpoints are inside the surface
+	if (code1 == 0) {
+		return point;
 	}
+
+	// Both endpoints are outside the surface, so the line is completely outside
+	if ((code1 & code2) != 0) {
+		return point; // Return the original point (it will be clipped later by the main function)
+	}
+
+	// Calculate the intersection point and update the corresponding endpoint
+	if (code1 & 1) {
+		point.y += dy * (0 - point.x) / dx;
+		point.x = 0;
+	} else if (code1 & 2) {
+		point.y += dy * (surfaceWidth - point.x) / dx;
+		point.x = surfaceWidth;
+	} else if (code1 & 4) {
+		point.x += dx * (0 - point.y) / dy;
+		point.y = 0;
+	} else if (code1 & 8) {
+		point.x += dx * (surfaceHeight - point.y) / dy;
+		point.y = surfaceHeight;
+	}
+
+	return point;
+}
+
+void draw_line_solid(Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB aColor)
+{
+	// Line gradient
+    int dx = std::abs(aBegin.x - aEnd.x);
+    int dy = std::abs(aBegin.y - aEnd.y);
+
+	// Direction of each pixel step
+    int stepX = aBegin.x < aEnd.x ? 1 : -1;
+    int stepY = aBegin.y < aEnd.y ? 1 : -1;
+    int err = dx - dy;
+
+	// Initial x,y values
+    int x = aBegin.x;
+    int y = aBegin.y;
+	
+    while (true)
+    {
+    	// If we drawn all pixels and came to end point then we stop
+    	if (x == aEnd.x && y == aEnd.y)
+    	{
+    		break;
+    	}
+    	
+    	// Simplified clipping
+        if (x >= 0 && x < aSurface.get_width() && y >= 0 && y < aSurface.get_height())
+        {
+        	aSurface.set_pixel_srgb(x, y, aColor);
+        }
+
+    	// Bresenham's line drawing algorithm
+        int e2 = 2 * err;
+        if (e2 > -dy)
+        {
+            err -= dy;
+            x += stepX;
+        }
+        if (e2 < dx)
+        {
+            err += dx;
+            y += stepY;
+        }
+    }
 }
 
 void draw_triangle_wireframe( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, ColorU8_sRGB aColor )
