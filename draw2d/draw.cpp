@@ -59,11 +59,13 @@ void draw_line_solid(Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB a
 	// Initial x,y values
     int x = aBegin.x;
     int y = aBegin.y;
+
+	float threshold = 2;
 	
     while (true)
     {
     	// If we drawn all pixels and came to end point then we stop
-    	if (x == aEnd.x && y == aEnd.y)
+		if (std::abs(x - aEnd.x) <= threshold && std::abs(y - aEnd.y) <= threshold)
     	{
     		break;
     	}
