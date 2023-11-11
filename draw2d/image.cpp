@@ -51,12 +51,26 @@ std::unique_ptr<ImageRGBA> load_image( char const* aPath )
 
 void blit_masked( Surface& aSurface, ImageRGBA const& aImage, Vec2f aPosition )
 {
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	(void)aSurface;  // Avoid warnings about unused arguments until the
-	(void)aImage;    // function is properly implemented.
-	(void)aPosition;
+	for (ImageRGBA::Index y = 0; y < aImage.get_height(); ++y)
+	{
+		for (ImageRGBA::Index x = 0; x < aImage.get_width(); ++x)
+		{
+			ColorU8_sRGB_Alpha sourcePixel = aImage.get_pixel(x, y);
+
+			// Validating alpha valuet
+			if (sourcePixel.a >= 128)
+			{
+				Surface::Index pixelXPosition = static_cast<Surface::Index>(aPosition.x) + x;
+				Surface::Index pixelYPosition = static_cast<Surface::Index>(aPosition.y) + y;
+
+				// Checking if the pixel position is within the surface bounds 
+				if (pixelXPosition < aSurface.get_width() && pixelYPosition < aSurface.get_height())
+				{
+					aSurface.set_pixel_srgb(pixelXPosition, pixelYPosition, ColorU8_sRGB{sourcePixel.r, sourcePixel.g, sourcePixel.b});
+				}
+			}
+		}
+	}
 }
 
 namespace
