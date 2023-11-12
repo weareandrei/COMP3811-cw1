@@ -6,45 +6,6 @@
 
 #include "surface.hpp"
 
-// Unfinished function
-Vec2f clip_coordinates_on_line(Vec2f point, int dx, int dy, int surfaceWidth, int surfaceHeight)
-{
-	// Calculate region codes for the two endpoints
-	int code1 = 0, code2 = 0;
-
-	if (point.x < 0) code1 |= 1;       // Left of the surface
-	if (point.x > surfaceWidth) code1 |= 2;  // Right of the surface
-	if (point.y < 0) code1 |= 4;       // Above the surface
-	if (point.y > surfaceHeight) code1 |= 8;  // Below the surface
-
-	// Check if both endpoints are inside the surface
-	if (code1 == 0) {
-		return point;
-	}
-
-	// Both endpoints are outside the surface, so the line is completely outside
-	if ((code1 & code2) != 0) {
-		return point; // Return the original point (it will be clipped later by the main function)
-	}
-
-	// Calculate the intersection point and update the corresponding endpoint
-	if (code1 & 1) {
-		point.y += dy * (0 - point.x) / dx;
-		point.x = 0;
-	} else if (code1 & 2) {
-		point.y += dy * (surfaceWidth - point.x) / dx;
-		point.x = surfaceWidth;
-	} else if (code1 & 4) {
-		point.x += dx * (0 - point.y) / dy;
-		point.y = 0;
-	} else if (code1 & 8) {
-		point.x += dx * (surfaceHeight - point.y) / dy;
-		point.y = surfaceHeight;
-	}
-
-	return point;
-}
-
 void draw_line_solid(Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB aColor)
 {
 	// Line gradient
