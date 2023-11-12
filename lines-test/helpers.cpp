@@ -10,24 +10,9 @@ std::size_t max_row_pixel_count( Surface const& aSurface )
 {
 	std::size_t res = 0;
 
-	auto const stride = aSurface.get_width() << 2;
 	for( std::uint32_t y = 0; y < aSurface.get_height(); ++y )
 	{
-		std::size_t inRow = 0;
-		for( std::uint32_t x = 0; x < aSurface.get_width(); ++x )
-		{
-			// Surface::get_linear_index() can be implemented in slightly
-			// different ways, with slightly different behaviour. Because
-			// of this, this code can't rely on it. 
-			//
-			// In your own tests, where you know how you implemented
-			// get_linear_index(), you can of course use it.
-			auto const idx = y*stride + (x<<2);
-			auto const ptr = aSurface.get_surface_ptr() + idx;
-
-			if( ptr[0] > 0 || ptr[1] > 0 || ptr[2] > 0 )
-				++inRow;
-		}
+		std::size_t inRow = row_pixel_count(aSurface, y);
 
 		res = std::max( inRow, res );
 	}
@@ -35,29 +20,52 @@ std::size_t max_row_pixel_count( Surface const& aSurface )
 	return res;
 }
 
+std::size_t row_pixel_count(const Surface& aSurface, std::uint32_t row)
+{
+	std::size_t count = 0;
+	auto const stride = aSurface.get_width() << 2;
+
+	for (std::uint32_t x = 0; x < aSurface.get_width(); ++x)
+	{
+		auto const idx = row * stride + (x << 2);
+		auto const ptr = aSurface.get_surface_ptr() + idx;
+
+		if (ptr[0] > 0 || ptr[1] > 0 || ptr[2] > 0)
+			++count;
+	}
+
+	return count;
+}
+
 std::size_t max_col_pixel_count( Surface const& aSurface )
 {
 	std::size_t res = 0;
 
-	auto const stride = aSurface.get_width() << 2;
 	for( std::uint32_t x = 0; x < aSurface.get_width(); ++x )
 	{
-		std::size_t inCol = 0;
-		for( std::uint32_t y = 0; y < aSurface.get_height(); ++y )
-		{
-			auto const idx = y*stride + (x<<2);
-			auto const ptr = aSurface.get_surface_ptr() + idx;
-
-			if( ptr[0] > 0 || ptr[1] > 0 || ptr[2] > 0 )
-				++inCol;
-		}
-
+		std::size_t inCol = col_pixel_count(aSurface, x);
 		res = std::max( inCol, res );
 	}
 
 	return res;
 }
 
+std::size_t col_pixel_count(const Surface& aSurface, std::uint32_t col)
+{
+	std::size_t count = 0;
+	auto const stride = aSurface.get_width() << 2;
+
+	for (std::uint32_t y = 0; y < aSurface.get_height(); ++y)
+	{
+		auto const idx = y * stride + (col << 2);
+		auto const ptr = aSurface.get_surface_ptr() + idx;
+
+		if (ptr[0] > 0 || ptr[1] > 0 || ptr[2] > 0)
+			++count;
+	}
+
+	return count;
+}
 
 std::array<std::size_t,9> count_pixel_neighbours( Surface const& aSurface )
 {

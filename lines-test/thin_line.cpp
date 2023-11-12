@@ -73,4 +73,31 @@ TEST_CASE( "1px wide lines", "[thin]" )
 		REQUIRE( 1 == max_col_pixel_count( surface ) );
 	}
 
+	SECTION( "lines connecting the same points but opposite directions produce same lines" )
+	{
+		draw_line_solid(surface,
+						{10.f, 10.f},
+						{12.f, 30.f},
+						{255, 255, 255});
+
+		std::size_t countFirstLine1 = col_pixel_count(surface, 10);
+		std::size_t countFirstLine2 = col_pixel_count(surface, 11);
+		std::size_t countFirstLine3 = col_pixel_count(surface, 12);
+		
+		surface.clear();
+
+		draw_line_solid(surface,
+						{12.f, 30.f},
+						{10.f, 10.f},
+						{255, 255, 255});
+		
+		std::size_t countSecondLine1 = col_pixel_count(surface, 10);
+		std::size_t countSecondLine2 = col_pixel_count(surface, 11);
+		std::size_t countSecondLine3 = col_pixel_count(surface, 12);
+
+		REQUIRE(countFirstLine1 == countSecondLine1);
+		REQUIRE(countFirstLine2 == countSecondLine2);
+		REQUIRE(countFirstLine3 == countSecondLine3);
+	}
+
 }

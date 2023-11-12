@@ -73,4 +73,35 @@ TEST_CASE( "No gaps", "[connect]" )
 		for( std::size_t i = 3; i < counts.size(); ++i )
 			REQUIRE( 0 == counts[i]  );
 	}
+
+	SECTION("line b starts from the end of line a")
+	{
+		draw_line_solid(surface,
+						{10.f, 100.f},
+						{100.f, 10.f},
+						{255, 0, 0});
+
+		draw_line_solid(surface,
+						{100.f, 10.f},
+						{150.f, 50.f},
+						{0, 255, 0});
+
+		int linearIndex = surface.get_linear_index(100.f, 10.f);
+
+		// Get color of pixel at (100.f, 10.f)
+		ColorU8_sRGB actualColor;
+		actualColor.r = surface.get_surface_ptr()[linearIndex];
+		actualColor.g = surface.get_surface_ptr()[linearIndex + 1];
+		actualColor.b = surface.get_surface_ptr()[linearIndex + 2];
+		
+		ColorU8_sRGB expectedColor;
+		expectedColor.r = 0;
+		expectedColor.g = 255;
+		expectedColor.b = 0;
+		
+		REQUIRE(actualColor.r == expectedColor.r);
+		REQUIRE(actualColor.g == expectedColor.g);
+		REQUIRE(actualColor.b == expectedColor.b);
+	}
+
 }

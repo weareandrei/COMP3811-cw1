@@ -9,6 +9,8 @@
 
 std::size_t max_row_pixel_count( Surface const& );
 std::size_t max_col_pixel_count( Surface const& );
+std::size_t col_pixel_count( const Surface& aSurface, std::uint32_t col );
+std::size_t row_pixel_count( const Surface& aSurface, std::uint32_t row );
 
 std::array<std::size_t,9> count_pixel_neighbours( Surface const& );
 
