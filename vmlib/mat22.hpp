@@ -2,7 +2,6 @@
 #define MAT22_HPP_1F974C02_D0D1_4FBD_B5EE_A69C88112088
 
 #include <cmath>
-#include <cstdio>
 
 #include "vec2.hpp"
 
